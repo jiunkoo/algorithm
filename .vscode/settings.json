@@ -1,6 +1,7 @@
 {
     "python.analysis.extraPaths": [
-        "./2025/06/code"
+        "./2025/06/code",
+        "./2025/07/code"
     ],
     "typescript.tsserver.web.projectWideIntellisense.enabled": true,
     "editor.suggest.matchOnWordStartOnly": false,
