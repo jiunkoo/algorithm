@@ -1,0 +1,62 @@
+import sys
+import os
+import time
+import tracemalloc
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '../code'))
+from lc37_sudoku_solver import Solution
+
+def print_board(board):
+    for row in board:
+        print(" ".join(row))
+    print()
+
+def test_sudoku_solver():
+    sol = Solution()
+    test_cases = [
+        (
+            [
+                ["5","3",".",".","7",".",".",".","."],
+                ["6",".",".","1","9","5",".",".","."],
+                [".","9","8",".",".",".",".","6","."],
+                ["8",".",".",".","6",".",".",".","3"],
+                ["4",".",".","8",".","3",".",".","1"],
+                ["7",".",".",".","2",".",".",".","6"],
+                [".","6",".",".",".",".","2","8","."],
+                [".",".",".","4","1","9",".",".","5"],
+                [".",".",".",".","8",".",".","7","9"]
+            ],
+            [
+                ["5","3","4","6","7","8","9","1","2"],
+                ["6","7","2","1","9","5","3","4","8"],
+                ["1","9","8","3","4","2","5","6","7"],
+                ["8","5","9","7","6","1","4","2","3"],
+                ["4","2","6","8","5","3","7","9","1"],
+                ["7","1","3","9","2","4","8","5","6"],
+                ["9","6","1","5","3","7","2","8","4"],
+                ["2","8","7","4","1","9","6","3","5"],
+                ["3","4","5","2","8","6","1","7","9"]
+            ]
+        ),
+        # 추가 테스트 케이스를 여기에 넣을 수 있습니다.
+    ]
+    for i, (board, expected) in enumerate(test_cases, 1):
+        tracemalloc.start()
+        start = time.time()
+        sol.solveSudoku(board)
+        end = time.time()
+        current, peak = tracemalloc.get_traced_memory()
+        tracemalloc.stop()
+        elapsed = (end - start) * 1000  # ms 단위
+
+        is_pass = board == expected
+        status = "성공" if is_pass else "실패"
+        print(f"테스트 {i} 〉\t{status} ({elapsed:.2f}ms, {peak / 1024:.2f}MB)")
+        if not is_pass:
+            print("결과:")
+            print_board(board)
+            print("정답:")
+            print_board(expected)
+
+if __name__ == "__main__":
+    test_sudoku_solver()
