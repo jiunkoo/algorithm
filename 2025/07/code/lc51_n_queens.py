@@ -10,42 +10,32 @@ from typing import List
 class Solution:
     def solveNQueens(self, n: int) -> List[List[str]]:
         answers = []
-        for x in range(n):
-            for y in range(n):
-                board = [["." for _ in range(n)] for _ in range(n)]
-                board[x][y] = "Q"
-                answer = self.check_8_directions(n, board, x, y)
-                if answer and answer not in answers:
-                    # print(x, y, answer)
-                    answers.append(answer)
-        
+        board = [["." for _ in range(n)] for _ in range(n)]
+        self.backtracking(n, board, 0, answers)
+
         return answers
 
-    def check_8_directions(self, n: int, board: List[List[str]], ox: int, oy: int) -> List[str]:
-        count = 0
-        for sx in range(n):
-            for sy in range(n):
-                up = self.backtracking(n, board, sx, sy, 1, sx, sy, "UP")
-                dn = self.backtracking(n, board, sx, sy, 1, sx, sy, "DOWN")
-                lt = self.backtracking(n, board, sx, sy, 1, sx, sy, "LEFT")
-                rt = self.backtracking(n, board, sx, sy, 1, sx, sy, "RIGHT")
-                ul = self.backtracking(n, board, sx, sy, 1, sx, sy, "UP_LEFT")
-                dr = self.backtracking(n, board, sx, sy, 1, sx, sy, "DOWN_RIGHT")
-                ur = self.backtracking(n, board, sx, sy, 1, sx, sy, "UP_RIGHT")
-                dl = self.backtracking(n, board, sx, sy, 1, sx, sy, "DOWN_LEFT")
+    def backtracking(self, n: int, board: List[List[str]], row: int, answers: List[List[str]]) -> List[str]:
+        if row == n:
+            answer = [''.join(row) for row in board]
+            answers.append(answer)
+            return
 
-                if up and dn and lt and rt and ul and dr and ur and dl:
-                    board[sx][sy] = "Q"
-                    count += 1
+        for col in range(n):
+            if self.no_queen_in_any_directions(n, board, row, col):
+                board[row][col] = "Q"
+                self.backtracking(n, board, row + 1, answers)
+                board[row][col] = "."
+    
+    def no_queen_in_any_directions(self, n:int, board: List[List[str]], sx: int, sy: int):
+        directions = ["UP", "DOWN", "LEFT", "RIGHT", "UP_LEFT", "DOWN_RIGHT", "UP_RIGHT", "DOWN_LEFT"]
+        for dir in directions:
+            if not self.is_no_queen(n, board, sx, sy, 1, sx, sy, dir):
+                return False
         
-        if ox == 0 and oy == 4:
-            print([''.join(row) for row in board])
+        return True
 
-        if count == n:
-            return [''.join(row) for row in board]
-        return []
-
-    def backtracking(self, n: int, board: List[List[str]], sx: int, sy: int, k: int, cx: int, cy: int, direct: str) -> bool:
+    def is_no_queen(self, n: int, board: List[List[str]], sx: int, sy: int, k: int, cx: int, cy: int, direct: str) -> bool:
         if cx < 0 or cx >= n or cy < 0 or cy >= n:
             return True
         if board[cx][cy] == "Q":
@@ -75,5 +65,5 @@ class Solution:
             cx = sx + k
             cy = sy - k
     
-        return self.backtracking(n, board, sx, sy, k + 1, cx, cy, direct)
+        return self.is_no_queen(n, board, sx, sy, k + 1, cx, cy, direct)
 # @lc code=end
