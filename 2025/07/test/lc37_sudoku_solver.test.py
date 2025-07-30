@@ -76,9 +76,9 @@ def test_sudoku_solver():
         is_pass = board == expected
         status = "성공" if is_pass else "실패"
         print(f"테스트 {i} 〉\t{status} ({elapsed:.2f}ms, {peak / 1024:.2f}MB)")
-        # if not is_pass:
-            # print("결과:")
-            # print_board(board)
+        if not is_pass:
+            print("결과:")
+            print_board(board)
             # print("정답:")
             # print_board(expected)
 

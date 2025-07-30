@@ -9,52 +9,47 @@ from typing import List
 
 class Solution:
     def solveSudoku(self, board: List[List[str]]) -> None:
-        self.backtracking(9, board)
+        self.rows = [set() for _ in range(9)]
+        self.cols = [set() for _ in range(9)]
+        self.blocks = [set() for _ in range(9)]
 
-    def backtracking(self, n: int, board: List[List[str]]) -> None:
-        for row in range(n):
-            for col in range(n):
-                if board[row][col] == '.':
-                    for target in map(str, range(1, 10)):
-                        if self.no_number_in_any_directions(n, board, row, col, target):
-                            board[row][col] = target
-                            if self.backtracking(n, board):
+        # 현재 보드 상태를 기반으로 set 초기화
+        for i in range(9):
+            for j in range(9):
+                val = board[i][j]
+                if val != '.':
+                    self.rows[i].add(val)
+                    self.cols[j].add(val)
+                    self.blocks[self.block_index(i, j)].add(val)
+
+        self.backtracking(board)
+
+    def block_index(self, i, j):
+        return (i // 3) * 3 + (j // 3)
+
+    def backtracking(self, board: List[List[str]]) -> bool:
+        for i in range(9):
+            for j in range(9):
+                if board[i][j] == '.':
+                    for num in map(str, range(1, 10)):
+                        block = self.block_index(i, j)
+                        if (
+                            num not in self.rows[i] and
+                            num not in self.cols[j] and
+                            num not in self.blocks[block]
+                        ):
+                            board[i][j] = num
+                            self.rows[i].add(num)
+                            self.cols[j].add(num)
+                            self.blocks[block].add(num)
+
+                            if self.backtracking(board):
                                 return True
-                            board[row][col] = '.'
+
+                            board[i][j] = '.'
+                            self.rows[i].remove(num)
+                            self.cols[j].remove(num)
+                            self.blocks[block].remove(num)
                     return False
         return True
-
-    def no_number_in_any_directions(self, n: int, board: List[List[str]], sx: int, sy: int, target: int) -> bool:
-        directions = ["UP", "DOWN", "LEFT", "RIGHT"]
-        for dir in directions:
-            if not self.is_no_number(n, board, sx, sy, 1, sx, sy, target, dir):
-                return False
-        
-        bsx = (sx // 3) * 3
-        bsy = (sy // 3) * 3
-        for i in range(3):
-            for j in range(3):
-                if board[bsx + i][bsy + j] == target:
-                    return False
-
-        return True
-
-    def is_no_number(self, n: int, board: List[List[str]], sx: int, sy: int, k: int, cx: int, cy: int, target: int, dir: str) -> bool:
-        if cx < 0 or cx >= n or cy < 0 or cy >= n:
-            return True
-        if board[cx][cy] == str(target):
-            if cx == sx and cy == sy:
-                pass
-            return False
-        
-        if dir == "UP":
-            cx = sx - k
-        elif dir == "DOWN":
-            cx = sx + k
-        elif dir == "LEFT":
-            cy = sy - k
-        elif dir == "RIGHT":
-            cy = sy + k
-        
-        return self.is_no_number(n, board, sx, sy, k + 1, cx, cy, target, dir)
 # @lc code=end
