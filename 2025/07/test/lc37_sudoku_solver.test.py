@@ -79,8 +79,8 @@ def test_sudoku_solver():
         if not is_pass:
             print("결과:")
             print_board(board)
-            # print("정답:")
-            # print_board(expected)
+            print("정답:")
+            print_board(expected)
 
 if __name__ == "__main__":
     test_sudoku_solver()
