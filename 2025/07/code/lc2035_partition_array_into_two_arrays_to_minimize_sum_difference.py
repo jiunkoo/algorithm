@@ -8,33 +8,59 @@
 from typing import List
 
 class Solution:
-    def minimumDifference(self, nums: List[int]) -> int:
-        nums.sort()
-        subsets = []
-        self.backtracking(nums, [], subsets)
+    def minimumDifference(self, nums):
+        n = len(nums)
+        half = n // 2
+        total = sum(nums)
 
-        answer = 999999999
-        for i in range(len(subsets) // 2):
-            diff = abs(sum(subsets[i]) - sum(subsets[-(i + 1)]))
-            if diff <= answer:
-                answer = diff
-        
-        return answer
+        left, right = nums[:half], nums[half:]
 
-    def backtracking(self, nums: List[int], subset: List[int], subsets: List[List[int]]) -> None:
-        if len(subset) <= len(nums):
-            sorted_subset = sorted(subset)
-            if sorted_subset not in subsets:
-                subsets.append(sorted_subset[:])
+        def get_sums(arr):
+            res = [[] for _ in range(len(arr) + 1)]
 
-        for num in nums:
-            if num <= max(subset, default = -99999999) and subset.count(num) == nums.count(num):
-                continue
+            def dfs(i, cnt, acc):
+                if i == len(arr):
+                    res[cnt].append(acc)
+                    return
 
-            subset.append(num)
-            self.backtracking(nums, subset, subsets)
-            subset.pop()
-        
-        subsets.sort(key=lambda x: (len(x), x))
-        return
+                dfs(i + 1, cnt, acc)
+                dfs(i + 1, cnt + 1, acc + arr[i])
+
+            dfs(0, 0, 0)
+            return res
+
+        left_sums = get_sums(left)
+        right_sums = get_sums(right)
+
+        for lst in right_sums:
+            lst.sort()
+
+        def lower_bound(arr, target):
+            lo, hi = 0, len(arr)
+            while lo < hi:
+                mid = (lo + hi) // 2
+                if arr[mid] < target:
+                    lo = mid + 1
+                else:
+                    hi = mid
+            return lo
+
+        ans = float("inf")
+
+        for size in range(len(left_sums)):
+            for s in left_sums[size]:
+                need = half - size
+                if 0 <= need < len(right_sums):
+                    arr = right_sums[need]
+                    target = total / 2 - s
+                    idx = lower_bound(arr, target)
+
+                    for j in [idx, idx - 1]:
+                        if 0 <= j < len(arr):
+                            picked = s + arr[j]
+                            diff = abs(2 * picked - total)
+                            if diff < ans:
+                                ans = diff
+
+        return ans
 # @lc code=end
