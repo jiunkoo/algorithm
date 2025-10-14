@@ -26,7 +26,11 @@ dx = [1, -1, 0, 0]
 dy = [0, 0, 1, -1]
 
 def spread(board):
-    q = deque(virus)
+    q = deque()
+    for i in range(N):
+        for j in range(M):
+            if board[i][j] == 2:
+                q.append((i, j))
     while q:
         x, y = q.popleft()
         for k in range(4):
