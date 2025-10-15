@@ -3,7 +3,8 @@
         "./2025/06/code",
         "./2025/07/code",
         "./2025/08/code",
-        "./2025/09/code"
+        "./2025/09/code",
+        "./2025/10/code"
     ],
     "typescript.tsserver.web.projectWideIntellisense.enabled": true,
     "editor.suggest.matchOnWordStartOnly": false,
